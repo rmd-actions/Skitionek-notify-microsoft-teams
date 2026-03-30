@@ -30,6 +30,12 @@ async function run() {
 		let raw = core.getInput('raw');
 		let dry_run = core.getInput('dry_run');
 
+		const overwrite = core.getInput('overwrite');
+		if (overwrite) {
+			core.warning('The "overwrite" parameter is deprecated. Please use "raw" instead.');
+			if (!raw) raw = overwrite;
+		}
+
 		core.info(`Parsed params:\n${JSON.stringify({
 			webhook_url: '***',
 			job,
@@ -57,7 +63,20 @@ async function run() {
 			payload = Object.assign({}, msteams.header, JSON.parse(raw));
 		}
 
-		core.info(`Generated payload for Microsoft Teams:\n${JSON.stringify(payload, null, 2)}`);
+    try {
+      core.info(
+        `Generated payload for Microsoft Teams:\n${JSON.stringify(
+          payload,
+          null,
+          2
+        )}`
+      );
+    } catch (stringifyError) {
+      core.error(
+        `Generated payload for Microsoft Teams (contains circular references, showing keys only):
+		${stringifyError}`
+      );
+    }
 
 		if (dry_run === '' || dry_run==='false') {
 			await msteams.notify(webhook_url, payload);

@@ -1,3 +1,22 @@
+# [1.1.0](https://github.com/Skitionek/notify-microsoft-teams/compare/v1.0.9...v1.1.0) (2026-02-19)
+
+
+### Bug Fixes
+
+* response status check - use && instead of || to avoid always-true condition ([c463ec9](https://github.com/Skitionek/notify-microsoft-teams/commit/c463ec91a33ffe6d625085ca4a8b4c11e5f49f2b))
+
+
+### Features
+
+* allow sponsorship ([a4a4b07](https://github.com/Skitionek/notify-microsoft-teams/commit/a4a4b0783229a5c9c0b166baa75b2e8784d981e8))
+
+## Upcoming Release
+
+### Features
+
+* Upgrades to use node 24.
+
+
 ## [1.0.9](https://github.com/Skitionek/notify-microsoft-teams/compare/v1.0.8...v1.0.9) (2025-04-14)
 
 
@@ -47,14 +66,14 @@
 
 ### Bug Fixes
 
-* flood with notifications upon relase publishing ([f9057c0](https://github.com/Skitionek/notify-microsoft-teams/commit/f9057c0665c7343d5eb020c3b70a98626decbaee))
+* flood with notifications upon release publishing ([f9057c0](https://github.com/Skitionek/notify-microsoft-teams/commit/f9057c0665c7343d5eb020c3b70a98626decbaee))
 
 ## [1.0.2](https://github.com/Skitionek/notify-microsoft-teams/compare/v1.0.1...v1.0.2) (2020-04-24)
 
 
 ### Bug Fixes
 
-* response just beeing trueish ([7a871d8](https://github.com/Skitionek/notify-microsoft-teams/commit/7a871d89fe844d5756332c56e71335c221dd6b95))
+* response just being trueish ([7a871d8](https://github.com/Skitionek/notify-microsoft-teams/commit/7a871d89fe844d5756332c56e71335c221dd6b95))
 
 ## [1.0.1](https://github.com/Skitionek/notify-microsoft-teams/compare/v1.0.0...v1.0.1) (2020-04-24)
 
@@ -80,7 +99,7 @@
 * corr icon path and response status ([564d288](https://github.com/Skitionek/notify-microsoft-teams/commit/564d2888863f811e69b2a2ab674dea90d48ec52d))
 * fix error message when "type" parameter is invalid word ([8f3ec4f](https://github.com/Skitionek/notify-microsoft-teams/commit/8f3ec4f7d5849e075e9c92d647bf1c8d559ac221))
 * fix workflows filepath ([d342318](https://github.com/Skitionek/notify-microsoft-teams/commit/d342318b7150851ef01999d62a3669788ed7a423))
-* invaild syntax ([9fe116f](https://github.com/Skitionek/notify-microsoft-teams/commit/9fe116fbaddd212511e601ac480deafde05e4a37))
+* invalid syntax ([9fe116f](https://github.com/Skitionek/notify-microsoft-teams/commit/9fe116fbaddd212511e601ac480deafde05e4a37))
 * invalid syntax ([4753b62](https://github.com/Skitionek/notify-microsoft-teams/commit/4753b627359327d98abfb29d3b97cccc65c208ee))
 * modify default value of slack channel ([4871c6b](https://github.com/Skitionek/notify-microsoft-teams/commit/4871c6beec96e92a91f083ad2d48f8db253fe272))
 * modify invalid indent ([3fac941](https://github.com/Skitionek/notify-microsoft-teams/commit/3fac94191ff8be8a5f19c3c87ccf59be59fd64b6))
@@ -123,7 +142,7 @@
 * CI & update README ([771d779](https://github.com/Skitionek/notify-microsoft-teams/commit/771d7790068f6a8cc6071d5d970d7920a823eca8))
 * fix error message when "type" parameter is invalid word ([8f3ec4f](https://github.com/Skitionek/notify-microsoft-teams/commit/8f3ec4f7d5849e075e9c92d647bf1c8d559ac221))
 * fix workflows filepath ([d342318](https://github.com/Skitionek/notify-microsoft-teams/commit/d342318b7150851ef01999d62a3669788ed7a423))
-* invaild syntax ([9fe116f](https://github.com/Skitionek/notify-microsoft-teams/commit/9fe116fbaddd212511e601ac480deafde05e4a37))
+* invalid syntax ([9fe116f](https://github.com/Skitionek/notify-microsoft-teams/commit/9fe116fbaddd212511e601ac480deafde05e4a37))
 * invalid syntax ([4753b62](https://github.com/Skitionek/notify-microsoft-teams/commit/4753b627359327d98abfb29d3b97cccc65c208ee))
 * modify default value of slack channel ([4871c6b](https://github.com/Skitionek/notify-microsoft-teams/commit/4871c6beec96e92a91f083ad2d48f8db253fe272))
 * modify invalid indent ([3fac941](https://github.com/Skitionek/notify-microsoft-teams/commit/3fac94191ff8be8a5f19c3c87ccf59be59fd64b6))
@@ -165,7 +184,7 @@
 * CI ([3c1f8fe](https://github.com/Skitionek/notify-microsoft-teams/commit/3c1f8fe7b04cc0b56228c9f0a358acd04a7a10f6))
 * fix error message when "type" parameter is invalid word ([8f3ec4f](https://github.com/Skitionek/notify-microsoft-teams/commit/8f3ec4f7d5849e075e9c92d647bf1c8d559ac221))
 * fix workflows filepath ([d342318](https://github.com/Skitionek/notify-microsoft-teams/commit/d342318b7150851ef01999d62a3669788ed7a423))
-* invaild syntax ([9fe116f](https://github.com/Skitionek/notify-microsoft-teams/commit/9fe116fbaddd212511e601ac480deafde05e4a37))
+* invalid syntax ([9fe116f](https://github.com/Skitionek/notify-microsoft-teams/commit/9fe116fbaddd212511e601ac480deafde05e4a37))
 * invalid syntax ([4753b62](https://github.com/Skitionek/notify-microsoft-teams/commit/4753b627359327d98abfb29d3b97cccc65c208ee))
 * modify default value of slack channel ([4871c6b](https://github.com/Skitionek/notify-microsoft-teams/commit/4871c6beec96e92a91f083ad2d48f8db253fe272))
 * modify invalid indent ([3fac941](https://github.com/Skitionek/notify-microsoft-teams/commit/3fac94191ff8be8a5f19c3c87ccf59be59fd64b6))
@@ -206,7 +225,7 @@
 * change to use workflow name  due to show badge ([ffb29f1](https://github.com/Skitionek/notify-microsoft-teams/commit/ffb29f125cd9d303c181a17db254a7a14dd2646b))
 * fix error message when "type" parameter is invalid word ([8f3ec4f](https://github.com/Skitionek/notify-microsoft-teams/commit/8f3ec4f7d5849e075e9c92d647bf1c8d559ac221))
 * fix workflows filepath ([d342318](https://github.com/Skitionek/notify-microsoft-teams/commit/d342318b7150851ef01999d62a3669788ed7a423))
-* invaild syntax ([9fe116f](https://github.com/Skitionek/notify-microsoft-teams/commit/9fe116fbaddd212511e601ac480deafde05e4a37))
+* invalid syntax ([9fe116f](https://github.com/Skitionek/notify-microsoft-teams/commit/9fe116fbaddd212511e601ac480deafde05e4a37))
 * invalid syntax ([4753b62](https://github.com/Skitionek/notify-microsoft-teams/commit/4753b627359327d98abfb29d3b97cccc65c208ee))
 * modify default value of slack channel ([4871c6b](https://github.com/Skitionek/notify-microsoft-teams/commit/4871c6beec96e92a91f083ad2d48f8db253fe272))
 * modify invalid indent ([3fac941](https://github.com/Skitionek/notify-microsoft-teams/commit/3fac94191ff8be8a5f19c3c87ccf59be59fd64b6))

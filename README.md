@@ -2,7 +2,7 @@
 ![CI](https://github.com/Skitionek/notify-microsoft-teams/workflows/CI/badge.svg)
 ![GitHub](https://img.shields.io/github/license/homoluctus/slatify?color=brightgreen)
 
-Teams notify action inspired by [git:homoluctus/slatify](https://github.com/homoluctus/slatify) (for Slack).
+Teams notify action inspired by [git:lazy-actions/slatify](https://github.com/lazy-actions/slatify) (for Slack).
 
 This is Microsoft Teams Notification for GitHub Actions.<br>
 Generated from [actions/javascript-template](https://github.com/actions/javascript-template).
