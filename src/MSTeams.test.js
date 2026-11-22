@@ -1,6 +1,6 @@
 // src/MSTeams.test.js
 const MSTeams = require('./MSTeams')
-const { IncomingWebhook } = require('ms-teams-webhook')
+const { HttpClient } = require('@actions/http-client')
 
 // Mock the github context
 jest.mock('./githubContext', () => ({
@@ -25,7 +25,7 @@ jest.mock('./githubContext', () => ({
   }
 }))
 
-jest.mock('ms-teams-webhook')
+jest.mock('@actions/http-client')
 
 describe('MSTeams.generatePayload', () => {
   it('should use custom actions when provided', async () => {
@@ -62,58 +62,107 @@ describe('MSTeams.generatePayload', () => {
     expect(actionSet).toBeDefined()
     expect(actionSet.actions.some(a => a.title === 'Repository')).toBe(true)
   })
+
+  it('should render outputs for a failed step when outputs is an object', async () => {
+    const msTeams = new MSTeams()
+    const payload = await msTeams.generatePayload({
+      steps: {
+        my_step: {
+          outcome: 'failure',
+          outputs: { result: 'some output value', code: '42' }
+        }
+      }
+    })
+
+    const body = payload.attachments[0].content.body
+    const textBlocks = body.flatMap(b =>
+      b.type === 'FactSet' ? b.facts.filter(f => f.type === 'TextBlock') : []
+    )
+    expect(textBlocks.length).toBeGreaterThan(0)
+    expect(textBlocks[0].text).toContain('my_step')
+    expect(textBlocks[0].text).toContain('result')
+  })
+
+  it('should not throw when a failed step has no outputs property', async () => {
+    const msTeams = new MSTeams()
+    await expect(
+      msTeams.generatePayload({
+        steps: {
+          my_step: { outcome: 'failure' }
+        }
+      })
+    ).resolves.toBeDefined()
+  })
+
+  it('should not render outputs block when outputs object is empty', async () => {
+    const msTeams = new MSTeams()
+    const payload = await msTeams.generatePayload({
+      steps: {
+        my_step: {
+          outcome: 'failure',
+          outputs: {}
+        }
+      }
+    })
+
+    const body = payload.attachments[0].content.body
+    const textBlocks = body.flatMap(b =>
+      b.type === 'FactSet' ? b.facts.filter(f => f.type === 'TextBlock') : []
+    )
+    expect(textBlocks.length).toBe(0)
+  })
 })
 
 describe('MSTeams.notify', () => {
   const webhookUrl = 'test-webhook-url'
   const payload = { message: 'Test Payload' }
 
-  let mockSend
+  let mockPostJson
 
   beforeEach(() => {
     jest.clearAllMocks()
     jest.restoreAllMocks()
 
-    // Mock the IncomingWebhook class and its send method
-    mockSend = jest.fn()
-    IncomingWebhook.mockImplementation(() => ({
-      sendRawAdaptiveCard: mockSend
+    // Mock the HttpClient class and its postJson method
+    mockPostJson = jest.fn()
+    HttpClient.mockImplementation(() => ({
+      postJson: mockPostJson
     }))
   })
 
   it('should send a success notification with status 202', async () => {
-    mockSend.mockResolvedValueOnce({ status: 202 })
+    mockPostJson.mockResolvedValueOnce({ statusCode: 202 })
 
     const msTeams = new MSTeams()
     await msTeams.notify(webhookUrl, payload)
 
-    expect(IncomingWebhook).toHaveBeenCalledWith(webhookUrl)
-    expect(mockSend).toHaveBeenCalledWith(payload)
-    expect(mockSend).toHaveBeenCalledTimes(1)
+    expect(HttpClient).toHaveBeenCalled()
+    expect(mockPostJson).toHaveBeenCalledWith(webhookUrl, payload)
+    expect(mockPostJson).toHaveBeenCalledTimes(1)
   })
 
   it('should send a success notification with status 200', async () => {
-    mockSend.mockResolvedValueOnce({ status: 200 })
+    mockPostJson.mockResolvedValueOnce({ statusCode: 200 })
 
     const msTeams = new MSTeams()
     await msTeams.notify(webhookUrl, payload)
 
-    expect(IncomingWebhook).toHaveBeenCalledWith(webhookUrl)
-    expect(mockSend).toHaveBeenCalledWith(payload)
-    expect(mockSend).toHaveBeenCalledTimes(1)
+    expect(HttpClient).toHaveBeenCalled()
+    expect(mockPostJson).toHaveBeenCalledWith(webhookUrl, payload)
+    expect(mockPostJson).toHaveBeenCalledTimes(1)
   })
 
   it('should throw an error if the notification fails', async () => {
-    mockSend.mockRejectedValueOnce(new Error('Webhook error'))
+    mockPostJson.mockRejectedValueOnce(new Error('Webhook error'))
 
     const msTeams = new MSTeams()
     await expect(msTeams.notify(webhookUrl, payload)).rejects.toThrow(
       expect.any(Error)
     )
 
-    expect(IncomingWebhook).toHaveBeenCalledWith(webhookUrl)
-    expect(mockSend).toHaveBeenCalledWith(payload)
-    expect(mockSend).toHaveBeenCalledTimes(1)
+    expect(HttpClient).toHaveBeenCalled()
+    expect(mockPostJson).toHaveBeenCalledWith(webhookUrl, payload)
+    expect(mockPostJson).toHaveBeenCalledTimes(1)
   })
 
   it('should throw an error for missing webhookUrl', async () => {
@@ -122,8 +171,7 @@ describe('MSTeams.notify', () => {
       expect.any(Error)
     )
 
-    expect(IncomingWebhook).not.toHaveBeenCalled()
-    expect(mockSend).not.toHaveBeenCalled()
+    expect(mockPostJson).not.toHaveBeenCalled()
   })
 
   it('should throw an error for missing payload', async () => {
@@ -132,30 +180,28 @@ describe('MSTeams.notify', () => {
       expect.any(Error)
     )
 
-    expect(IncomingWebhook).not.toHaveBeenCalled()
-    expect(IncomingWebhook.prototype.send).not.toHaveBeenCalled()
+    expect(mockPostJson).not.toHaveBeenCalled()
   })
 
   it('Returns error for empty response', async () => {
-    mockSend.mockResolvedValueOnce({})
+    mockPostJson.mockResolvedValueOnce({})
 
     const msTeams = new MSTeams()
     await expect(msTeams.notify(webhookUrl, payload)).rejects.toThrow(
       expect.any(Error)
     )
 
-    expect(IncomingWebhook).toHaveBeenCalledWith(webhookUrl)
-    expect(mockSend).toHaveBeenCalledWith(payload)
-    expect(mockSend).toHaveBeenCalledTimes(1)
+    expect(HttpClient).toHaveBeenCalled()
+    expect(mockPostJson).toHaveBeenCalledWith(webhookUrl, payload)
+    expect(mockPostJson).toHaveBeenCalledTimes(1)
   })
 
   it('Handles response with circular references without JSON.stringify errors', async () => {
     // Create a mock response object with circular references similar to HTTP ClientRequest/TLSSocket
     const mockResponseWithCircularRef = {
-      status: 400,
-      statusText: 'Bad Request',
+      statusCode: 400,
       headers: { 'content-type': 'application/json' },
-      data: { error: 'Invalid payload' }
+      result: { error: 'Invalid payload' }
     }
 
     // Create circular reference to simulate ClientRequest -> TLSSocket -> _httpMessage -> ClientRequest
@@ -163,7 +209,7 @@ describe('MSTeams.notify', () => {
     mockResponseWithCircularRef.socket = socket
 
     // This creates the circular reference that would cause JSON.stringify to fail
-    mockSend.mockResolvedValueOnce(mockResponseWithCircularRef)
+    mockPostJson.mockResolvedValueOnce(mockResponseWithCircularRef)
 
     const msTeams = new MSTeams()
 
@@ -178,7 +224,6 @@ describe('MSTeams.notify', () => {
         'Failed to send notification to Microsoft Teams'
       )
       expect(error.message).toContain('"status": 400')
-      expect(error.message).toContain('"statusText": "Bad Request"')
       expect(error.message).not.toContain(
         'Converting circular structure to JSON'
       )
@@ -186,10 +231,9 @@ describe('MSTeams.notify', () => {
       // Verify that the error message includes the response details we expect
       const errorMessage = error.message
       expect(errorMessage).toMatch(/"status":\s*400/)
-      expect(errorMessage).toMatch(/"statusText":\s*"Bad Request"/)
     }
 
-    expect(IncomingWebhook).toHaveBeenCalledWith(webhookUrl)
-    expect(mockSend).toHaveBeenCalledWith(payload)
+    expect(HttpClient).toHaveBeenCalled()
+    expect(mockPostJson).toHaveBeenCalledWith(webhookUrl, payload)
   })
 })

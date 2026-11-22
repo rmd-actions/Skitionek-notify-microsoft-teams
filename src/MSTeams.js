@@ -1,6 +1,6 @@
-const { IncomingWebhook } = require('ms-teams-webhook')
 const { context: github } = require('./githubContext')
 const core = require('@actions/core')
+const { HttpClient } = require('@actions/http-client')
 
 const placeholder = ''
 const {
@@ -108,7 +108,7 @@ const summary_generator = (obj, status_key) => {
       title: `${status.icon} ${truncateString(step_id, 15)}`,
       value: status.activityTitle
     })
-    if (status.id === 'failure' && obj[step_id].outputs.length) {
+    if (status.id === 'failure' && Object.keys(obj[step_id].outputs || {}).length) {
       let text = `${step_id}:\n`
       text += outputs2markdown(obj[step_id].outputs)
       if (text !== '') {
@@ -326,27 +326,25 @@ class MSTeams {
           'Please provide a valid payload.'
       )
     }
-    const client = new IncomingWebhook(url)
-    const response = await client.sendRawAdaptiveCard(payload)
+    const client = new HttpClient()
+    const response = await client.postJson(url, payload)
 
-    if (![200, 202].includes(response?.status)) {
+    if (![200, 202].includes(response?.statusCode)) {
       // Create a safe representation of the response to avoid circular reference errors
       const safeResponse = {}
 
       // Safely copy properties, handling potential circular references
       try {
-        safeResponse.status = response?.status
-        safeResponse.statusText = response?.statusText
+        safeResponse.status = response?.statusCode
         safeResponse.headers = response?.headers
           ? JSON.parse(JSON.stringify(response.headers))
           : undefined
-        safeResponse.data = response?.data
-          ? JSON.parse(JSON.stringify(response.data))
+        safeResponse.data = response?.result
+          ? JSON.parse(JSON.stringify(response.result))
           : undefined
       } catch {
         // If we still hit circular references, just include basic info
-        safeResponse.status = response?.status
-        safeResponse.statusText = response?.statusText
+        safeResponse.status = response?.statusCode
         safeResponse.error = 'Response contained circular references'
       }
 
